@@ -3,7 +3,10 @@ import { assert, basename } from "./deps.ts";
 const SUCCESS_MESSAGE_STYLE = "background: #222; color: #bada55";
 const ERROR_MESSAGE_STYLE = "background: #222; color: #ff0000";
 
+if(Deno.args.length < 1) console.error('%cAdd hook file or folder', ERROR_MESSAGE_STYLE), Deno.exit(0);
+
 const hooks_source = Deno.args[0];
+
 const hooks_source_absolute_path = await Deno.realPath(hooks_source);
 const hooks_source_lstat = await Deno.lstat(hooks_source_absolute_path);
 
@@ -35,12 +38,11 @@ if (hooks_source_lstat.isFile) {
     SUCCESS_MESSAGE_STYLE,
   );
 } else {
-  console.log(`group of hooks`);
+  console.log(`Folder of hooks detected...`);
 
   for await (const entry of Deno.readDir(hooks_source_absolute_path)) {
     if (!entry.isFile) continue;
-    console.log(entry);
-
+    
     const hook_entry_path = `${hooks_source_absolute_path}/${entry.name}`;
 
     console.log(`Processing hook from [ ${hook_entry_path} ]`);
