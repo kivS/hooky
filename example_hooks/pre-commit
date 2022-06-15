@@ -1,0 +1,1 @@
+console.log("pre-commit hook is running now in $(pwd)")
