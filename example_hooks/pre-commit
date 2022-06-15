@@ -1,3 +1,4 @@
 echo "pre-commit hook is running now in $(pwd)"
 
+echo "Let\'s format the code first..."
 deno fmt .
