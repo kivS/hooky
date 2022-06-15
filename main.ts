@@ -24,21 +24,7 @@ try {
 }
 
 if (hooks_source_lstat.isFile) {
-  console.log(`Processing hook from [ ${hooks_source_absolute_path} ]`);
-
-  const hook_target = `${Deno.cwd()}/.git/hooks/${
-    basename(hooks_source_absolute_path)
-  }`;
-
-  await Deno.symlink(hooks_source_absolute_path, hook_target, { type: "file" });
-
-  // read, write and execute permission(for user and group, read for rest) for symbolic link of hook
-  await Deno.chmod(hook_target, 0o774);
-
-  console.log(
-    `%cHook [ ${hook_target} ] has been installed and activated`,
-    SUCCESS_MESSAGE_STYLE,
-  );
+  await install_hook(hooks_source_absolute_path);
 } else {
   console.log(`Folder of hooks detected...`);
 
@@ -47,18 +33,22 @@ if (hooks_source_lstat.isFile) {
 
     const hook_entry_path = `${hooks_source_absolute_path}/${entry.name}`;
 
-    console.log(`Processing hook from [ ${hook_entry_path} ]`);
-
-    const hook_target = `${Deno.cwd()}/.git/hooks/${entry.name}`;
-
-    await Deno.symlink(hook_entry_path, hook_target, { type: "file" });
-
-    // read, write and execute permission(for user and group, read for rest) for symbolic link of hook
-    await Deno.chmod(hook_target, 0o774);
-
-    console.log(
-      `%cHook [ ${hook_target} ] has been installed and activated`,
-      SUCCESS_MESSAGE_STYLE,
-    );
+    await install_hook(hook_entry_path);
   }
+}
+
+async function install_hook(hook_file_path: string): Promise<void> {
+  console.log(`Processing hook from [ ${hook_file_path} ]`);
+
+  const hook_target = `${Deno.cwd()}/.git/hooks/${basename(hook_file_path)}`;
+
+  await Deno.symlink(hook_file_path, hook_target, { type: "file" });
+
+  // read, write and execute permission(for user and group, read for rest) for symbolic link of hook
+  await Deno.chmod(hook_target, 0o774);
+
+  console.log(
+    `%cHook [ ${hook_target} ] has been installed and activated`,
+    SUCCESS_MESSAGE_STYLE,
+  );
 }
